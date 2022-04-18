@@ -16,26 +16,26 @@ import {
 import { supabase } from "src/utils/supabase";
 import { useSnackbar } from "notistack";
 
-const Register = () => {
+const Create = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
-      email: "",
-      password: "",
-      policy: false,
+      name: "",
+      address: "",
     },
     validationSchema: Yup.object({
-      email: Yup.string().email("Must be a valid email").max(255).required("Email is required"),
-      password: Yup.string().max(255).required("Password is required"),
-      policy: Yup.boolean().oneOf([true], "This field must be checked"),
+      name: Yup.string().required("nama tidak boleh kosong"),
+      address: Yup.string().required("alamat tidak boleh"),
+      phone: Yup.string().required("no hp tidak boleh kosong"),
     }),
     onSubmit: async (value) => {
-      const { user, error } = await supabase.auth.signUp(value);
+      const { data, error } = await supabase
+        .from("bakoel")
+        .insert([{ name: value.name, address: value.address, phone: value.phone }]);
       try {
-        localStorage.setItem("userId", user.id);
         enqueueSnackbar("Berhasil", { variant: "success" });
-        router.push("/");
+        router.push("/customers/customers");
       } catch {
         enqueueSnackbar("Gagal", { variant: "error" });
       }
@@ -45,7 +45,7 @@ const Register = () => {
   return (
     <>
       <Head>
-        <title>Daftar | Bakoel</title>
+        <title>Pelanggan | Bakoel</title>
       </Head>
       <Box
         component="main"
@@ -60,58 +60,52 @@ const Register = () => {
           <form onSubmit={formik.handleSubmit}>
             <Box sx={{ my: 3 }}>
               <Typography color="textPrimary" variant="h4">
-                Daftar Akun
+                Pelanggan
               </Typography>
               <Typography color="textSecondary" gutterBottom variant="body2">
-                Gunakan email anda untuk mendaftarkan akun
+                catat data pelanggan usaha anda
               </Typography>
             </Box>
             <TextField
               error={Boolean(formik.touched.email && formik.errors.email)}
               fullWidth
               helperText={formik.touched.email && formik.errors.email}
-              label="Email Address"
+              label="Nama"
               margin="normal"
-              name="email"
+              name="name"
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               type="text"
-              value={formik.values.email}
+              value={formik.values.name}
               variant="outlined"
             />
             <TextField
               error={Boolean(formik.touched.password && formik.errors.password)}
               fullWidth
               helperText={formik.touched.password && formik.errors.password}
-              label="Password"
+              label="Alamat"
               margin="normal"
-              name="password"
+              name="address"
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
-              type="password"
-              value={formik.values.password}
+              type="text"
+              value={formik.values.address}
               variant="outlined"
             />
-            <Box
-              sx={{
-                alignItems: "center",
-                display: "flex",
-                ml: -1,
-              }}
-            >
-              <Checkbox name="policy" onChange={formik.handleChange} />
-              <Typography color="textSecondary" variant="body2">
-                Saya akan menerima
-                <NextLink href="#" passHref>
-                  <Link ml="4px" color="primary" underline="always" variant="subtitle2">
-                    syarat dan ketentuan
-                  </Link>
-                </NextLink>
-              </Typography>
-            </Box>
-            {Boolean(formik.touched.policy && formik.errors.policy) && (
-              <FormHelperText error>{formik.errors.policy}</FormHelperText>
-            )}
+            <TextField
+              error={Boolean(formik.touched.password && formik.errors.password)}
+              fullWidth
+              helperText={formik.touched.password && formik.errors.password}
+              label="Nomor Hp"
+              margin="normal"
+              name="phone"
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+              type="number"
+              value={formik.values.phone}
+              variant="outlined"
+            />
+
             <Box sx={{ py: 2 }}>
               <Button
                 color="primary"
@@ -121,17 +115,9 @@ const Register = () => {
                 type="submit"
                 variant="contained"
               >
-                Daftar
+                Submit
               </Button>
             </Box>
-            <Typography color="textSecondary" variant="body2">
-              Sudah punya Akun?
-              <NextLink href="/login" passHref>
-                <Link variant="subtitle2" underline="hover">
-                  Masuk
-                </Link>
-              </NextLink>
-            </Typography>
           </form>
         </Container>
       </Box>
@@ -139,4 +125,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Create;

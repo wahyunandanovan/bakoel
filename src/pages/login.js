@@ -8,8 +8,10 @@ import { Box, Button, Container, Grid, Link, TextField, Typography } from "@mui/
 import { Facebook as FacebookIcon } from "../icons/facebook";
 import { Google as GoogleIcon } from "../icons/google";
 import { supabase } from "src/utils/supabase";
+import { useSnackbar } from "notistack";
 
 const Login = () => {
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
@@ -22,9 +24,13 @@ const Login = () => {
     }),
     onSubmit: async (value) => {
       const { user, error } = await supabase.auth.signIn(value);
-      console.log(user);
-      localStorage.setItem("userId", user.id);
-      router.push("/");
+      try {
+        localStorage.setItem("userId", user.id);
+        router.push("/");
+        enqueueSnackbar("Berhasil", { variant: "success" });
+      } catch {
+        enqueueSnackbar("Gagal", { variant: "error" });
+      }
     },
   });
 

@@ -49,7 +49,13 @@ export const DashboardNavbar = (props) => {
 
   useEffect(() => {
     const user = supabase.auth.user();
-    console.log(user);
+    setName(user.email);
+    try {
+      const token = JSON.parse(localStorage.getItem("supabase.auth.token"));
+      localStorage.setItem("token", token.currentSession.access_token);
+    } catch {
+      console.log("ada error");
+    }
   }, []);
 
   return (

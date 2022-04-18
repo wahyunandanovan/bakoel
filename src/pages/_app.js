@@ -8,6 +8,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import { createEmotionCache } from "../utils/create-emotion-cache";
 import { theme } from "../theme";
 import { useRouter } from "next/router";
+import { SnackbarProvider } from "notistack";
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -26,18 +27,20 @@ const App = (props) => {
   }, []);
 
   return (
-    <CacheProvider value={emotionCache}>
-      <Head>
-        <title>Material Kit Pro</title>
-        <meta name="viewport" content="initial-scale=1, width=device-width" />
-      </Head>
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          {getLayout(<Component {...pageProps} />)}
-        </ThemeProvider>
-      </LocalizationProvider>
-    </CacheProvider>
+    <SnackbarProvider maxSnack={3}>
+      <CacheProvider value={emotionCache}>
+        <Head>
+          <title>Material Kit Pro</title>
+          <meta name="viewport" content="initial-scale=1, width=device-width" />
+        </Head>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            {getLayout(<Component {...pageProps} />)}
+          </ThemeProvider>
+        </LocalizationProvider>
+      </CacheProvider>
+    </SnackbarProvider>
   );
 };
 
